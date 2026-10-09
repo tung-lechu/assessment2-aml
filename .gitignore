@@ -8,6 +8,7 @@ venv/
 # Local datasets
 data/**
 !data/.gitkeep
+!data/README.md
 
 # Local runtime and Spark state
 .runtime/
