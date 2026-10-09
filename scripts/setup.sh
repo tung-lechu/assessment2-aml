@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Reproduce this project's local macOS Apple Silicon environment.
+# Install the project environment on an Apple Silicon Mac.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 if [ "$(uname -s)-$(uname -m)" != "Darwin-arm64" ]; then

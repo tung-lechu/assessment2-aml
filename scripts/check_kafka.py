@@ -1,4 +1,4 @@
-"""Bounded synthetic connectivity check, separate from the assessment producer."""
+"""Check that Python and Spark can read a sample Kafka message."""
 import json
 import tempfile
 import uuid
@@ -12,7 +12,7 @@ from pyspark.sql.types import ArrayType, StringType, StructField, StructType
 
 
 def check_kafka(spark, project_root, bootstrap="127.0.0.1:9092"):
-    """Verify Python round trip and a Spark streaming micro-batch; clean up topic."""
+    """Send one sample message, check both readers and remove the test topic."""
     topic = "a2-setup-" + uuid.uuid4().hex
     table = "a2_setup_" + uuid.uuid4().hex
     payload = [{"message": "environment-ready",
