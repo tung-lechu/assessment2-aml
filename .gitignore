@@ -1,0 +1,25 @@
+# Python and notebooks
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.venv/
+venv/
+
+# Local datasets
+data/**
+!data/.gitkeep
+
+# Local runtime and Spark state
+.runtime/
+checkpoints/
+spark-warehouse/
+metastore_db/
+derby.log
+*.log
+
+# Local settings and temporary files
+.env
+.env.*
+.DS_Store
+tmp/
+*.tmp
