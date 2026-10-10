@@ -14,6 +14,7 @@ from kafka3.admin import KafkaAdminClient, NewTopic
 from kafka3.errors import KafkaError, TopicAlreadyExistsError
 
 STREAM_PATH = Path(__file__).resolve().parent / "data/stream_data.parquet"
+MAX_MESSAGE_BYTES = 32 * 1024 * 1024
 MESSAGE_COLUMNS = [
     "source_record_id", "timestamp", "from_bank", "sender_account",
     "to_bank", "receiver_account", "amount_received", "receiving_currency",
@@ -52,7 +53,10 @@ def main():
 
     admin = KafkaAdminClient(bootstrap_servers=args.bootstrap_servers, request_timeout_ms=10000)
     try:
-        admin.create_topics([NewTopic(args.topic, num_partitions=1, replication_factor=1)])
+        admin.create_topics([NewTopic(
+            args.topic, num_partitions=1, replication_factor=1,
+            topic_configs={"max.message.bytes": str(MAX_MESSAGE_BYTES)},
+        )])
     except TopicAlreadyExistsError:
         pass
     finally:
@@ -62,6 +66,7 @@ def main():
         bootstrap_servers=args.bootstrap_servers,
         value_serializer=lambda records: json.dumps(records, allow_nan=False).encode("utf-8"),
         acks="all", retries=3, max_in_flight_requests_per_connection=1,
+        max_request_size=MAX_MESSAGE_BYTES,
     )
     total_records = 0
     batch_number = 0
