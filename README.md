@@ -65,7 +65,7 @@ Section A3 adapts the sender entity and payment summaries from Assessment 1 usin
 
 Account history adds previous sender to receiver payments, transaction gaps and receipts relative to the receiver's recent average. Amount comparisons use the same currency and the preceding 24 hours.
 
-Section A4 prepares 16 inputs for training, validation and test data. History uses only earlier training records. The Spark pipeline encodes categories and assembles the feature vector, with all fitted stages learned from training data. The feature tables and fitted preprocessing model are saved under `data/`.
+Section A4 prepares 16 inputs for training, validation and test data. History uses only earlier training records. The Spark pipeline encodes categories and assembles the feature vector, with all fitted stages learned from training data. The feature tables and fitted preprocessing model are saved under `data/`. A correlation heatmap checks overlap between numeric inputs using only training records.
 
 ## References
 
