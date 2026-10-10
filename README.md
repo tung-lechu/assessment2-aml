@@ -111,6 +111,20 @@ Invalid messages stop the prediction query and report the affected Kafka offsets
 
 The three-batch run saved 3,000 records. Source values, all 34 inputs, scores and predictions matched batch processing, with no missing inputs. Restarting from the checkpoint left the saved count at 3,000. Processing took 8.8–9.2 seconds per batch on this machine, so a sustained five-second producer interval would create a backlog. The full streaming subset has not yet been scored.
 
+## Window monitoring
+
+B3 counts predicted positives in ten-minute windows starting every two minutes. It uses publication-time `event_timestamp`, with a one-minute watermark and a five-second processing trigger. Each transaction belongs to five overlapping windows, so totals across windows include repeated transactions.
+
+After B2 has saved predictions, run B3 in order. In a fresh session, run the environment and Start Spark cells first. B3 reads the saved Parquet files directly, so Kafka and model inference do not need to be rerun. Set `STREAM_RUN` to the B2 run to monitor.
+
+The named console query uses update mode to show provisional window counts. Its checkpoint is `checkpoints/b2_demo/windows_console/` for the default run. Keep that checkpoint when resuming the same query. Use a new checkpoint for a fresh replay or a change to the source, window size, slide or watermark. The totals cell stops the query after the currently available files have been processed.
+
+A separate small test sends fixed timestamps out of order and advances event time to check window closure and rejection of an expired event. Test predictions are kept under `.runtime/window_checks/` and never enter the AML prediction folder. The test stops its query automatically.
+
+The watermark advances with event time. Waiting one minute without receiving newer timestamps does not close the remaining windows. The one-minute allowance covers twelve producer intervals and is provisional for this local demonstration. An in-order backlog delays the output without automatically making events late; longer runs need arrival-delay measurements.
+
+The saved 3,000-record replay produced five open windows, each containing 3,000 transactions and zero predicted positives. Their console counts matched batch aggregation exactly. In the separate timing test, all seven final windows matched independently calculated counts. The event 30 seconds out of order was included, and the expired event was dropped from all five of its windows. Restarting the monitor from its checkpoint reread no records.
+
 ## Data
 
 The source is the HI-Small subset of [IBM Transactions for Anti-Money Laundering (AML) on Kaggle](https://www.kaggle.com/datasets/ealtman2019/ibm-transactions-for-anti-money-laundering-aml).
