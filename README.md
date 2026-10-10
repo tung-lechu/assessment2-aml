@@ -61,9 +61,15 @@ Use the same `HI-Small_Trans.csv` and `HI-Small_accounts.csv` files approved for
 
 Sections A1 and A2 check the files, split the transactions into development and streaming data, and save both as Parquet. The split settings and results are recorded in `data/split_manifest.json`.
 
+Section A3 adapts the sender entity and payment summaries from Assessment 1 using only the training records. It adds the classification baseline, bar charts, box plots, histograms and heatmaps to explore distributions and relationships in the training data. Relative amounts use each currency’s own percentiles so all 15 currencies can be explored without mixing monetary units.
+
 ## References
 
+[Assessment 1 notebook, sections 3.1 and 3.2](https://github.com/tung-lechu/assessment1-aml/blob/94acdaa21b071efc135a1fb4257710b8664f3fd0/assessment1.ipynb)
+
 [IBM Transactions for Anti-Money Laundering (AML)](https://www.kaggle.com/datasets/ealtman2019/ibm-transactions-for-anti-money-laundering-aml)
+
+[Kaggle analysis used as a reference for the exploratory presentation](https://www.kaggle.com/code/ardabaranbaytar/anti-money-laundering-transaction-analysis-and-ris)
 
 [Apache Kafka 3.9 KRaft setup](https://kafka.apache.org/39/getting-started/quickstart/)
 
