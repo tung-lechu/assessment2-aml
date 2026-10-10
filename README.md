@@ -42,7 +42,7 @@ Start Jupyter in the second:
 bash scripts/start_notebook.sh
 ```
 
-Open `assessment2.ipynb`, select Python (assessment2-aml) and run the cells in order. The setup checks the package versions, a small Spark calculation and a sample Kafka message read by both Python and Spark. The temporary Kafka topic is removed after the check.
+Open `assessment2.ipynb`, select Python (assessment2-aml) and run the cells in order. The setup displays the package versions and checks a sample Kafka message read by both Python and Spark. The temporary Kafka topic is removed after the check.
 
 Kafka must be running for this check. Set `RUN_KAFKA_SMOKE_TEST = False` when working offline on Part A. Use the final notebook cell to stop Spark. Stop Kafka and Jupyter with Ctrl+C in their terminals. Kafka stores its local files under `.runtime/`.
 
@@ -63,6 +63,10 @@ Sections A1 and A2 check the files, split the transactions into development and 
 
 Section A3 adapts the sender entity and payment summaries from Assessment 1 using only the training records. It adds the classification baseline, bar charts, box plots, histograms and heatmaps to explore distributions and relationships in the training data. Relative amounts use each currency’s own percentiles so all 15 currencies can be explored without mixing monetary units.
 
+Account history adds previous sender to receiver payments, transaction gaps and receipts relative to the receiver's recent average. Amount comparisons use the same currency and the preceding 24 hours.
+
+Section A4 prepares 16 inputs for training, validation and test data. History uses only earlier training records. The Spark pipeline encodes categories and assembles the feature vector, with all fitted stages learned from training data. The feature tables and fitted preprocessing model are saved under `data/`.
+
 ## References
 
 [Assessment 1 notebook, sections 3.1 and 3.2](https://github.com/tung-lechu/assessment1-aml/blob/94acdaa21b071efc135a1fb4257710b8664f3fd0/assessment1.ipynb)
@@ -70,6 +74,8 @@ Section A3 adapts the sender entity and payment summaries from Assessment 1 usin
 [IBM Transactions for Anti-Money Laundering (AML)](https://www.kaggle.com/datasets/ealtman2019/ibm-transactions-for-anti-money-laundering-aml)
 
 [Kaggle analysis used as a reference for the exploratory presentation](https://www.kaggle.com/code/ardabaranbaytar/anti-money-laundering-transaction-analysis-and-ris)
+
+[Spark 3.5.7 historical window boundaries](https://spark.apache.org/docs/3.5.7/api/python/reference/pyspark.sql/api/pyspark.sql.Window.rangeBetween.html)
 
 [Apache Kafka 3.9 KRaft setup](https://kafka.apache.org/39/getting-started/quickstart/)
 

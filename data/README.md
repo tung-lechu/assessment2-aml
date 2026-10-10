@@ -37,6 +37,10 @@ Run sections A1 and A2 of `assessment2.ipynb` to check the inputs and create the
 
 `data/split_manifest.json` records the input checksums, split settings, row counts and verification results.
 
+Section A4 saves `data/model_training.parquet/`, `data/model_validation.parquet/` and `data/model_test.parquet/`. Each table has 16 inputs, the target and the source record ID. History uses only earlier training transactions. Missing history values use zero placeholders with separate flags.
+
+`data/preprocessing_model/` contains the fitted Spark preprocessing stages. Categories are learned from training data and encoded before VectorAssembler creates the model input. The same fitted stages transform all three tables.
+
 The split targets 75% development and 25% streaming. A hash calculation includes seed 42 as a salt and keeps transactions with identical details in the same group, without using their labels. Seed 43 divides development into approximately 70% training, 15% validation and 15% test data. The actual counts are shown in the notebook and manifest.
 
 `source_record_id` is each transaction's position in the original CSV, excluding the header. Duplicate rows have separate IDs but share a `transaction_group_id` and partition assignment. These IDs and the partition columns are used to check the split and are excluded from model features. All source rows are kept.
