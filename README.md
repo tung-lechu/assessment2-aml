@@ -55,6 +55,34 @@ To run the notebook from a terminal while Kafka is running:
   --ExecutePreprocessor.timeout=1800 assessment2.ipynb
 ```
 
+## Kafka producer
+
+Run A1 and A2 first to create `data/stream_data.parquet`. The producer reads this saved subset in bounded batches. It creates the requested topic if needed and uses one JSON array per Kafka message.
+
+Start Kafka in one terminal:
+
+```bash
+bash scripts/start_kafka.sh
+```
+
+In another terminal, send three batches of 1,000 records:
+
+```bash
+.venv/bin/python producer.py --batch-size 1000 --max-batches 3
+```
+
+For a complete replay:
+
+```bash
+.venv/bin/python producer.py --batch-size 1000
+```
+
+The default topic is `aml-transactions` at `127.0.0.1:9092`. Change these with `--topic` and `--bootstrap-servers`. The batch size defaults to 1,000; batches at file boundaries can be smaller. Omitting `--max-batches` reads all 1,269,694 reserved records in 1,280 batches. The five-second pauses alone take about 107 minutes for a full replay.
+
+Each record keeps its source ID and original transaction timestamp. A separate `event_timestamp` records publication time in UTC. Labels and split columns are omitted. The producer waits for Kafka acknowledgement, prints each batch's count, timestamp and offset, and pauses for five seconds before the next batch. Stop a running producer with Ctrl+C; stop Kafka with Ctrl+C in its terminal.
+
+The B1 notebook cells run a three-batch check on a separate topic, compare the received records with the source, then remove the test topic. All 3,000 records matched. A separate reader check covered the full subset and JSON serialization; the full subset has not yet been replayed through Kafka. For model predictions, the B2 consumer will need to be running before publication to the main topic.
+
 ## Data
 
 The source is the HI-Small subset of [IBM Transactions for Anti-Money Laundering (AML) on Kaggle](https://www.kaggle.com/datasets/ealtman2019/ibm-transactions-for-anti-money-laundering-aml).
