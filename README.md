@@ -83,6 +83,34 @@ Each record keeps its source ID and original transaction timestamp. A separate `
 
 The B1 notebook cells run a three-batch check on a separate topic, compare the received records with the source, then remove the test topic. All 3,000 records matched. A separate reader check covered the full subset and JSON serialization; the full subset has not yet been replayed through Kafka. For model predictions, the B2 consumer will need to be running before publication to the main topic.
 
+## Streaming predictions
+
+B2 reads Kafka arrays, prepares the selected 34 inputs and applies the saved XGBoost pipeline and threshold. Account history uses strictly earlier training transactions. Incoming records do not update that reference, and no model is fitted in the consumer.
+
+For a fresh notebook session with Part A already saved:
+
+1. Start Kafka with `bash scripts/start_kafka.sh` and open the notebook.
+2. Run the environment and Start Spark cells.
+3. Run A3's six function cells: `account_events`, `account_activity`, `counterparty_activity`, `pair_activity`, `combine_account_features` and `prepare_features`.
+4. Run B1's message schema cell.
+5. Run B2 in order. It loads the model, starts the consumer, publishes three batches, checks the saved predictions and stops both queries.
+
+The default run name is `b2_demo`, using topic `aml-b2-demo`. Predictions, their prepared inputs and Kafka identifiers are saved under `data/stream_predictions/b2_demo/`. Checkpoints are under `checkpoints/b2_demo/predictions/` and `checkpoints/b2_demo/console/`. These files stay local.
+
+Each five-second trigger reads at most one Kafka message, containing up to 1,000 transactions with the default producer settings. Feature preparation runs within `foreachBatch`; each Spark batch writes a separate Parquet folder. A completed folder is kept if that batch is retried. A second file stream prints five saved predictions per console batch without running the model again.
+
+For a fresh demonstration, change `STREAM_RUN` before starting. To resume, keep the same run name, topic, output and checkpoints, and skip the three-batch producer cell. Starting offsets apply only to a new checkpoint. Replaying the producer creates new Kafka offsets for the same source IDs, which are retained as separate arrivals. Do not delete or reuse a checkpoint with a different topic, model or output folder.
+
+To publish manually while the B2 consumer is running:
+
+```bash
+.venv/bin/python producer.py --topic aml-b2-demo --batch-size 1000 --max-batches 3
+```
+
+Invalid messages stop the prediction query and report the affected Kafka offsets. Check `prediction_query.exception()` and `prediction_query.recentProgress` when investigating a stopped query. Run B2's final cell to stop its queries, then Stop Spark when finished. Stop Kafka with Ctrl+C in its terminal.
+
+The three-batch run saved 3,000 records. Source values, all 34 inputs, scores and predictions matched batch processing, with no missing inputs. Restarting from the checkpoint left the saved count at 3,000. Processing took 8.8–9.2 seconds per batch on this machine, so a sustained five-second producer interval would create a backlog. The full streaming subset has not yet been scored.
+
 ## Data
 
 The source is the HI-Small subset of [IBM Transactions for Anti-Money Laundering (AML) on Kaggle](https://www.kaggle.com/datasets/ealtman2019/ibm-transactions-for-anti-money-laundering-aml).
