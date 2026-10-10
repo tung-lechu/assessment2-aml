@@ -7,6 +7,9 @@ if [ "$(uname -s)-$(uname -m)" != "Darwin-arm64" ]; then
   exit 1
 fi
 command -v uv >/dev/null || { echo "Install uv first: brew install uv" >&2; exit 1; }
+if [ ! -f /opt/homebrew/opt/libomp/lib/libomp.dylib ]; then
+  brew install libomp
+fi
 mkdir -p .runtime/downloads
 uv python install 3.11.17
 if [ ! -x .venv/bin/python ]; then
