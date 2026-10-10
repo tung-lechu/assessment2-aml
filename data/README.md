@@ -29,7 +29,7 @@ Matching checksums confirm that the files are the same as those used in Assessme
 
 ## Generated data
 
-Run sections A1 and A2 of `assessment2.ipynb` to check the inputs and create the split.
+Run sections A1 and A2 of `33602190_assessment2.ipynb` to check the inputs and create the split.
 
 `data/development_data.parquet/` contains development records with their training, validation and test assignments.
 

@@ -44,7 +44,7 @@ Start Jupyter in the second:
 bash scripts/start_notebook.sh
 ```
 
-Open `assessment2.ipynb`, select `Python (assessment2-aml)` and follow the cells in order. The setup checks the package versions and sends a sample Kafka message through Python and Spark. It removes the test topic afterwards.
+Open `33602190_assessment2.ipynb`, select `Python (assessment2-aml)` and follow the cells in order. The setup checks the package versions and sends a sample Kafka message through Python and Spark. It removes the test topic afterwards.
 
 Keep Kafka running for that check. When working offline on Part A, set `RUN_KAFKA_SMOKE_TEST = False`. The final notebook cell stops Spark. Press Ctrl+C in the Kafka and Jupyter terminals to stop those services. Kafka's local files are under `.runtime/`.
 
@@ -52,7 +52,7 @@ To run the notebook from a terminal while Kafka is running:
 
 ```bash
 .venv/bin/jupyter nbconvert --execute --to notebook --inplace \
-  --ExecutePreprocessor.timeout=1800 assessment2.ipynb
+  --ExecutePreprocessor.timeout=1800 33602190_assessment2.ipynb
 ```
 
 For another streaming run, choose new run names as described below. Reusing a topic and sending the same data again creates duplicate arrivals.
@@ -178,6 +178,10 @@ A6 saves preprocessing and XGBoost together under `models/a2_model`, with the th
 To check the saved model, run the notebook setup and A6's Reload and predict cells. All 200 sample scores and predictions matched after loading in a fresh session. A6 also saves training transactions without labels to `data/training_history.parquet` for the streaming features.
 
 Earlier test results were reviewed before the features were expanded. The repeated test results therefore serve as a benchmark, while the reserved streaming subset is used only in Part B.
+
+## AI acknowledgement
+
+I used OpenAI Codex to help with debugging, research, brainstorming and proofreading during this assignment.
 
 ## References
 
